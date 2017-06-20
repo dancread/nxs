@@ -1,0 +1,4 @@
+ctags
+*.obj
+*.exe
+tags
