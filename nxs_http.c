@@ -5,8 +5,9 @@
 
 char *http_buffer;
 long http_buffer_size;
-void NXS_HTTPInit() {
+BOOL NXS_HTTPInit() {
   http_buffer_size=0;
+  return TRUE;
 }
 void NXS_HTTPCleanUp() {
   free(http_buffer);
