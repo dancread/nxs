@@ -1,15 +1,20 @@
+#include <windows.h>
+#define STRING_SIZE 1000
+
 typedef struct {
-  char *artifactId;
-  char *version;
-  char *groupId;
-  char *resourceURI;
+  char repository[STRING_SIZE];
+  char artifactId[STRING_SIZE];
+  char version[STRING_SIZE];
+  char groupId[STRING_SIZE];
+  char classifier[STRING_SIZE];
+  char resourceURI[STRING_SIZE];
 } NexusArtifact_t;
-typedef struct{
-  char *repository;
-  char *artifactId;
-  char *version;
-  char *groupId;
-  char *resourceURI;
+typedef struct {
+  char repository[STRING_SIZE];
+  char artifactId[STRING_SIZE];
+  char version[STRING_SIZE];
+  char groupId[STRING_SIZE];
+  char classifier[STRING_SIZE];
 } NexusSearch_t;
 
 

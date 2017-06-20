@@ -1,24 +1,21 @@
 #include <windows.h>
 #include <stdio.h>
-#include "nxs_http.h"
 #include "nxs.h"
-void PrintArtifact(NexusArtifact_t*);
-int wmain(INT argc, WCHAR **argv){
-  NXS_Init();
-  NXS_Search(argv[1]);
-  NXS_CleanUp();
-  return 0;
-}
+#include "nxs_http.h"
+void _NXS_PrintArtifact(NexusArtifact_t*);
 void NXS_Search(WCHAR *query){
-  NXS_XMLParseSearch(NXS_HTTPQuery(query));
+  NXS_XMLParseSearch(NXS_HTTPQuery(query), _NXS_PrintArtifact);
   //NXS_HTTPQuery(query);
 }
 void NXS_Init(){
   NXS_HTTPInit();
 }
 void NXS_CleanUp(){
-  // Free Allocations
+  NXS_HTTPCleanUp();
 }
-void PrintArtifact(NexusArtifact_t *artifact){
-  //printf("%s\n", artifact->artifactId); 
+void _NXS_PrintArtifact(NexusArtifact_t *artifact){
+  // Skip entries with classifiers
+  if(*artifact->classifier == '\0') {
+    printf("%s %s %s %s\n", artifact->groupId, artifact->artifactId, artifact->version, artifact->classifier); 
+  }
 }
