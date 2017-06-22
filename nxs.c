@@ -10,7 +10,7 @@ void NXS_Search(WCHAR *query){
 }
 void NXS_Init(){
   if(!NXS_ConfLoad() || !NXS_HTTPInit()){
-    printf("Failed to initialize nxs.\n");
+    wprintf(L"Failed to initialize nxs.\n");
     ExitProcess(1);
   }
 }
@@ -20,6 +20,6 @@ void NXS_CleanUp(){
 void _NXS_PrintArtifact(NexusArtifact_t *artifact){
   // Skip entries with classifiers
   if(*artifact->classifier == '\0') {
-    //printf("%s %s %s %s\n", artifact->groupId, artifact->artifactId, artifact->version, artifact->classifier); 
+    printf("%s %s %s %s\n", artifact->groupId, artifact->artifactId, artifact->version, artifact->classifier); 
   }
 }

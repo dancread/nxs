@@ -17,7 +17,6 @@ typedef struct {
   char classifier[STRING_SIZE];
 } NexusSearch_t;
 
-
 void NXS_Init();
 void NXS_CleanUp();
 void NXS_Search(WCHAR*);

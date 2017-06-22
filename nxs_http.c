@@ -35,10 +35,12 @@ char *NXS_HTTPQuery(WCHAR *query){
                           WINHTTP_NO_PROXY_BYPASS, 0 );
 
   // Specify an HTTP server.
+  wprintf(L"Connecting to %s ...", configuration.nexus_server);
   if( hSession )
-    hConnect = WinHttpConnect( hSession, L"nexus.edi.cerner.corp",
+    hConnect = WinHttpConnect( hSession, configuration.nexus_server,
                                INTERNET_DEFAULT_HTTPS_PORT, 0 );
 
+  wprintf(L"Connected\n");
   // Create an HTTP request handle.
   wcscpy(query_url,L"service/local/data_index?r=proxy&q=");
   wcscat(query_url,query);
@@ -81,7 +83,7 @@ char *NXS_HTTPQuery(WCHAR *query){
       // Check for available data.
       dwSize = 0;
       if( !WinHttpQueryDataAvailable( hRequest, &dwSize ) ) {
-        printf( "Error %u in WinHttpQueryDataAvailable.\n", GetLastError( ) );
+        wprintf(L"Error %u in WinHttpQueryDataAvailable.\n", GetLastError( ) );
       }
 
       // Allocate space for the buffer.
@@ -98,7 +100,7 @@ char *NXS_HTTPQuery(WCHAR *query){
       }
       if( !pszOutBuffer || !http_buffer )
       {
-        printf( "Out of memory\n" );
+        wprintf(L"Out of memory\n" );
         //free(http_buffer);
         dwSize=0;
       }
@@ -108,7 +110,7 @@ char *NXS_HTTPQuery(WCHAR *query){
         ZeroMemory( pszOutBuffer, dwSize+1 );
 
         if( !WinHttpReadData( hRequest, (LPVOID)pszOutBuffer, dwSize, &dwDownloaded ) ){
-          printf( "Error %u in WinHttpReadData.\n", GetLastError( ) );
+          wprintf(L"Error %u in WinHttpReadData.\n", GetLastError( ) );
         }
         else {
           //printf( "GET: %s\n", pszOutBuffer );
@@ -131,7 +133,7 @@ char *NXS_HTTPQuery(WCHAR *query){
 
   // Report any errors.
   if( !bResults )
-    printf( "Error %d has occurred.\n", GetLastError( ) );
+    wprintf(L"Error %d has occurred.\n", GetLastError( ) );
 
   // Close any open handles.
   if( hRequest ) WinHttpCloseHandle( hRequest );
