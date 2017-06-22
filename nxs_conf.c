@@ -2,13 +2,12 @@
 #include <stdio.h>
 #include "nxs_conf.h"
 NXS_Conf_t configuration;
+
+void _NXS_ConfExtractValue(char *dest, char *src);
 BOOL NXS_ConfLoad() {
   DWORD iBytesRead;
   char *pFileContent = NULL;
   char *pConfiguration = NULL;
-  char *pEqualIterator = NULL;
-  char *pEqual = NULL;
-  int confValueLen = 0;
   size_t file_content_size = 0;
   char buffer[200];
   HANDLE hFile = CreateFileW(NXS_CONF_FILENAME,               // file to open
@@ -42,23 +41,34 @@ BOOL NXS_ConfLoad() {
   // Load configuration struct
   pConfiguration  = strtok(pFileContent, "\n");
   while (pConfiguration != NULL) {
-    if(strcmp(pConfiguration, "nexus_url")){
-      pEqual = pEqualIterator = strchr(pConfiguration, '=');
-      confValueLen = 0;
-      pEqualIterator++; // Move past '='
-      pEqual++; // Move past '='
-      while(*pEqualIterator != '\n' && *pEqualIterator != '\0'){
-        pEqualIterator++;
-        confValueLen++;
-      }
-      printf("%d\n", confValueLen);
-      strncpy(configuration.nexus_url, pEqual, confValueLen);
-      printf("%s\n",configuration.nexus_url);
-      }
+    // +1 to move past '='
+    if(strncmp(pConfiguration, "nexus_server", strlen("nexus_server"))) {
+      _NXS_ConfExtractValue(configuration.nexus_server, strchr(pConfiguration, '=') + 1);
+    }
+    if(strncmp(pConfiguration, "nexus_context", strlen("nexus_context"))) {
+      _NXS_ConfExtractValue(configuration.nexus_context, strchr(pConfiguration, '=') + 1);
+    }
     pConfiguration = strtok(NULL,"\n");
   }
   return TRUE;
 }
 void NXS_GetValue(char *key, char *value) {
-
+ if(strcmp(key,"nexus_server")) {
+    value = configuration.nexus_server;
+  } 
+ if(strcmp(key,"nexus_context")) {
+    value = configuration.nexus_context;
+  } 
+}
+void _NXS_ConfExtractValue(char *dest, char *src) {
+  char *ptr = NULL;
+  int length = 0;
+  ptr = src;
+  while(*ptr != '\n' && *ptr != '\0'){
+    ptr++;
+    length++;
+  }
+  printf("%d ", length);
+  printf("%s\n",src);
+  strncpy(dest, src, length);
 }

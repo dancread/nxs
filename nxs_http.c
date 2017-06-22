@@ -1,6 +1,7 @@
 #include <windows.h>
 #include <winhttp.h>
 #include <stdio.h>
+#include "nxs_conf.h"
 #include "nxs_http.h"
 
 char *http_buffer;
