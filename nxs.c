@@ -1,11 +1,19 @@
 #include <windows.h>
 #include <stdio.h>
+#include "nxs_artifact.h"
 #include "nxs_http.h"
 #include "nxs_conf.h"
 #include "nxs.h"
-void _NXS_PrintArtifact(NexusArtifact_t*);
+char lastGroupIdEntry[300];
+char lastArtifactIdEntry[300];
+NexusArtifact_t *artifacts[];
+int artifacts_length;
+int artifact_count;
+void _NXS_PrintArtifacts(NexusArtifact_t*);
+void _NXS_AddArtifact(NexusArtifact_t*);
 void NXS_Search(WCHAR *query){
-  NXS_XMLParseSearch(NXS_HTTPQuery(query), _NXS_PrintArtifact);
+  NXS_XMLParseSearch(NXS_HTTPQuery(query), _NXS_AddArtifact);
+  _NXS_PrintArtifacts();
   //NXS_HTTPQuery(query);
 }
 void NXS_Init(){
@@ -17,9 +25,35 @@ void NXS_Init(){
 void NXS_CleanUp(){
   NXS_HTTPCleanUp();
 }
-void _NXS_PrintArtifact(NexusArtifact_t *artifact){
+void _NXS_PrintArtifact(){
   // Skip entries with classifiers
   if(*artifact->classifier == '\0') {
-    printf("%s %s %s %s\n", artifact->groupId, artifact->artifactId, artifact->version, artifact->classifier); 
+    if(strncmp(artifact->groupId, lastGroupIdEntry, 300) == 0) {
+      //printf("artifact: %s\n", lastArtifactIdEntry);
+      if(strncmp(artifact->artifactId, lastArtifactIdEntry, 300) == 0) {
+        printf("\t\t%s\n", artifact->version); 
+      }
+      else {
+        printf("\t%s\n", artifact->artifactId);
+      }
+      strcpy(lastArtifactIdEntry,artifact->artifactId);
+    }
+    else {
+      printf("%s\n", artifact->groupId);
+    }
+    strcpy(lastGroupIdEntry,artifact->groupId);
   }
+}
+void _NXS_AddArtifact(NexusArtifact_t* artifact) {
+  if(!artifacts) {
+    artifact_count = 0;
+    artifacts_length = sizeof(NexusArtifact_t) * 5;
+    artifacts = malloc(artifacts_length); 
+  }
+  else if(artifacts_count == rtifacts_length){
+    artifacts_length += sizeof(NexusArtifact_t) * 5;
+    artifacts = realloc(artifacts, sizeof(NexusArtifact_t) * artifacts_length); 
+  }
+  NXS_ArtifactCopy(&artifacts[artifacts_count], artifact);
+
 }
